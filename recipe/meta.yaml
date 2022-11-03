@@ -41,6 +41,12 @@ outputs:
 
   - name: dotnet-runtime
     version: {{ runtime_version }}
+    build:
+      ignore_run_exports:
+          - libcurl
+          - krb5 
+          - zlib
+
     script: build-runtime.bat       # [win]
     script: build-runtime.sh        # [not win]
     requirements:
@@ -54,9 +60,9 @@ outputs:
         - lttng-ust              # [linux64]
       run:
         - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
+        #- libcurl                   # [unix]
         - icu                       # [unix]
-        - krb5                      # [unix]
+        #- krb5                      # [unix]
         - __glibc >=2.17            # [linux64]
     test:
       commands:
@@ -77,6 +83,12 @@ outputs:
     version: {{ sdk_version }}
     script: build-sdk.bat       # [win]
     script: build-sdk.sh        # [not win]
+    build:
+      ignore_run_exports:
+          - libcurl
+          - krb5
+          - zlib
+
     requirements:
       build:
         - {{ compiler('cxx') }}
@@ -88,9 +100,9 @@ outputs:
         - lttng-ust              # [linux64]
       run:
         - lttng-ust             # [linux64]
-        - libcurl               # [unix]
+        #- libcurl               # [unix]
         - icu                   # [unix]
-        - krb5                  # [unix]
+        #- krb5                  # [unix]
         - __glibc >=2.17        # [linux64]
         - dotnet-runtime ={{ runtime_version }}
     test:
@@ -109,6 +121,12 @@ outputs:
     version: {{ runtime_version }}
     script: build-aspnetcore.bat    # [win]
     script: build-aspnetcore.sh     # [not win]
+    build:
+      ignore_run_exports:
+          - libcurl
+          - krb5
+          - zlib
+
     requirements:
       build:
         - {{ compiler('cxx') }}
@@ -120,9 +138,9 @@ outputs:
         - lttng-ust              # [linux64]
       run:
         - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
+        #- libcurl                   # [unix]
         - icu                       # [unix]
-        - krb5                      # [unix]
+        #- krb5                      # [unix]
         - __glibc >=2.17            # [linux64]
         - dotnet-runtime ={{ runtime_version }}
     test:

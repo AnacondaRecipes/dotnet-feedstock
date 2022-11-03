@@ -7,7 +7,9 @@ if [[ "${target_platform}" == "win-64" ]]; then
     DOTNET_ROOT="${PREFIX}/dotnet"
 else
     DOTNET_ROOT="${PREFIX}/lib/dotnet"
+    cp dotnet/dotnet $PREFIX/bin
 fi
+
 
 mkdir -p "${DOTNET_ROOT}/shared"
 mkdir -p "${DOTNET_ROOT}/tools"
