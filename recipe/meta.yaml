@@ -46,6 +46,7 @@ outputs:
           - libcurl
           - krb5 
           - zlib
+          - libzlib
 
     script: build-runtime.bat       # [win]
     script: build-runtime.sh        # [not win]
@@ -88,6 +89,7 @@ outputs:
           - libcurl
           - krb5
           - zlib
+          - libzlib
 
     requirements:
       build:
@@ -126,6 +128,7 @@ outputs:
           - libcurl
           - krb5
           - zlib
+          - libzlib
 
     requirements:
       build:
