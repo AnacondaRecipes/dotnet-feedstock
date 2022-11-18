@@ -24,7 +24,7 @@ source:
 
 build:
   number: 0
-  binary_relocation: False  # [osx]
+  binary_relocation: False  
   skip: True # [not win]
 
 outputs:
@@ -43,6 +43,9 @@ outputs:
   - name: dotnet-runtime
     version: {{ runtime_version }}
     build:
+      binary_relocation: False  
+      missing_dso_whitelist: 
+          - "*"
       ignore_run_exports:
           - libcurl
           - krb5 
@@ -175,8 +178,8 @@ outputs:
       license: MIT                                                                    # [win]
       license_file: dotnet/LICENSE.txt                                                # [win]
       summary: |                                                                      # [win]
-        .NET Core is a free and open-source managed computer software
-        framework for the Windows, Linux, and macOS operating systems.
+        .NET Core is a free and open-source managed computer software                 # [win]
+        framework for the Windows, Linux, and macOS operating systems.                # [win]
 
 about:
   home: https://github.com/dotnet/core
