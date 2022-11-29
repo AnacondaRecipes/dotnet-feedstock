@@ -7,6 +7,7 @@ if [[ "${target_platform}" == "win-64" ]]; then
     DOTNET_ROOT="${PREFIX}/dotnet"
 else
     DOTNET_ROOT="${PREFIX}/lib/dotnet"
+    DOTNET_ROOT="${PREFIX}/dotnet"
 fi
 
 
