@@ -2,12 +2,7 @@
 set -eox pipefail
 
 PREFIX=$(echo "${PREFIX}" | tr '\\' '/')
-
-if [[ "${target_platform}" == "win-64" ]]; then
-    DOTNET_ROOT="${PREFIX}/dotnet"
-else
-    DOTNET_ROOT="${PREFIX}/lib/dotnet"
-fi
+DOTNET_ROOT="${PREFIX}/dotnet"
 
 mkdir -p "${DOTNET_ROOT}/shared"
 cp -r ./dotnet/shared/Microsoft.AspNetCore.App/ "${DOTNET_ROOT}/shared/Microsoft.AspNetCore.App/"
