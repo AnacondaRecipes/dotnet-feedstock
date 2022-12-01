@@ -1,15 +1,8 @@
-{% set sdk_version = "6.0.401" %}
-{% set runtime_version = "6.0.9" %}
-{% set sha256 = "2b6a3f70d3dc98cb8917175ec16fe4d3cdf658b61cbf7d4e5bdf6e7f4424d57e" %}  # [aarch64]
-{% set sha256 = "90613d213d6100566a3be1c3e4d940f9dc4fb94d9bfd7e6346c429e61c31d917" %}  # [linux]
-{% set sha256 = "6f92b9d6c289787a194e55510e1536b3da99d92540e44612fc3b131fe52c6ec7" %}  # [arm64]
-{% set sha256 = "d7f9b81633485ffd5cd0b822d46cd142fb10dcdcda613501f4531cd8be49ca8e" %}  # [osx]
-{% set sha256 = "723bdc5ce704ee57a4890e2fdc21e3fb9b1540d9e27e20c2026d82074dff2401" %}  # [win]
-{% set platform = "linux-arm64" %}    # [aarch64]
-{% set platform = "linux-x64" %}  # [linux]
-{% set platform = "osx-arm64" %}  # [arm64]
-{% set platform = "osx-x64" %}    # [osx]
+{% set sdk_version = "7.0.100" %}
+{% set runtime_version = "7.0.0" %}
+{% set sha256 = "4f6a1d9bfdcffadaf5deb9c9c30d0c7864c2d0478ec2804e766f3d614fc1e33e" %}  # [win]
 {% set platform = "win-x64" %}    # [win]
+
 {% set ext = "tar.gz" %}      # [not win]
 {% set ext = "zip" %}         # [win]
 
@@ -24,7 +17,8 @@ source:
 
 build:
   number: 0
-  binary_relocation: False  # [osx]
+  binary_relocation: False  
+  skip: True # [not win]
 
 outputs:
   - name: dotnet
@@ -41,30 +35,21 @@ outputs:
 
   - name: dotnet-runtime
     version: {{ runtime_version }}
+    build:
+      binary_relocation: False  
+      missing_dso_whitelist: 
+          - "*"
+
     script: build-runtime.bat       # [win]
-    script: build-runtime.sh        # [not win]
     requirements:
       build:
         - {{ compiler('cxx') }}
         - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
-      run:
-        - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
-        - icu                       # [unix]
-        - krb5                      # [unix]
-        - __glibc >=2.17            # [linux64]
     test:
       commands:
         - dotnet --list-runtimes
-        #- test "${DOTNET_ROOT}" = "${CONDA_PREFIX}/lib/dotnet"         # [unix]
-        #- test "${DOTNET_TOOLS}" = "${CONDA_PREFIX}/lib/dotnet/tools"  # [unix]
-        #- if not defined DOTNET_ROOT exit 1   # [win]
-        #- if not defined DOTNET_TOOLS exit 1  # [win]
+        - if not defined DOTNET_ROOT exit 1   # [win]
+        - if not defined DOTNET_TOOLS exit 1  # [win]
     about:
       home: https://github.com/dotnet/runtime
       license: MIT
@@ -76,27 +61,16 @@ outputs:
   - name: dotnet-sdk
     version: {{ sdk_version }}
     script: build-sdk.bat       # [win]
-    script: build-sdk.sh        # [not win]
+
     requirements:
       build:
         - {{ compiler('cxx') }}
         - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
       run:
-        - lttng-ust             # [linux64]
-        - libcurl               # [unix]
-        - icu                   # [unix]
-        - krb5                  # [unix]
-        - __glibc >=2.17        # [linux64]
         - dotnet-runtime ={{ runtime_version }}
     test:
       commands:
         - dotnet --version                   # [not aarch64]
-        - test -f $PREFIX/lib/dotnet/dotnet  # [aarch64]
     about:
       home: https://github.com/dotnet/sdk
       license: MIT
@@ -108,26 +82,15 @@ outputs:
   - name: dotnet-aspnetcore
     version: {{ runtime_version }}
     script: build-aspnetcore.bat    # [win]
-    script: build-aspnetcore.sh     # [not win]
+
     requirements:
       build:
         - {{ compiler('cxx') }}
         - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
       run:
-        - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
-        - icu                       # [unix]
-        - krb5                      # [unix]
-        - __glibc >=2.17            # [linux64]
         - dotnet-runtime ={{ runtime_version }}
     test:
       commands:
-        - test -d $PREFIX/lib/dotnet/shared/Microsoft.AspNetCore.App              # [not win]
         - if not exist %PREFIX%\\dotnet\\shared\\Microsoft.AspNetCore.App exit 1  # [win]
     about:
       home: https://github.com/dotnet/aspnetcore
@@ -152,9 +115,10 @@ outputs:
       home: https://github.com/dotnet/desktop                                         # [win]
       license: MIT                                                                    # [win]
       license_file: dotnet/LICENSE.txt                                                # [win]
-      summary: |                                                                      # [win]
-        .NET Core is a free and open-source managed computer software
-        framework for the Windows, Linux, and macOS operating systems.
+      summary: |                                                                      
+        .NET Core is a free and open-source managed computer software                 # [win]
+        framework for the Windows, Linux, and macOS operating systems.                # [win]
+        .
 
 about:
   home: https://github.com/dotnet/core
@@ -166,6 +130,4 @@ about:
 
 extra:
   recipe-maintainers:
-    - dhirschfeld
-    - ZimmerA
-    - acesnik
+    - bkreider
