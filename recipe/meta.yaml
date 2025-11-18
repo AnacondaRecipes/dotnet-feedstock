@@ -1,16 +1,7 @@
-{% set sdk_version = "6.0.401" %}
-{% set runtime_version = "6.0.9" %}
-{% set sha256 = "2b6a3f70d3dc98cb8917175ec16fe4d3cdf658b61cbf7d4e5bdf6e7f4424d57e" %}  # [aarch64]
-{% set sha256 = "90613d213d6100566a3be1c3e4d940f9dc4fb94d9bfd7e6346c429e61c31d917" %}  # [linux]
-{% set sha256 = "6f92b9d6c289787a194e55510e1536b3da99d92540e44612fc3b131fe52c6ec7" %}  # [arm64]
-{% set sha256 = "d7f9b81633485ffd5cd0b822d46cd142fb10dcdcda613501f4531cd8be49ca8e" %}  # [osx]
-{% set sha256 = "723bdc5ce704ee57a4890e2fdc21e3fb9b1540d9e27e20c2026d82074dff2401" %}  # [win]
-{% set platform = "linux-arm64" %}    # [aarch64]
-{% set platform = "linux-x64" %}  # [linux]
-{% set platform = "osx-arm64" %}  # [arm64]
-{% set platform = "osx-x64" %}    # [osx]
-{% set platform = "win-x64" %}    # [win]
-{% set ext = "tar.gz" %}      # [not win]
+{% set sdk_version = "8.0.100" %}
+{% set runtime_version = "8.0.0" %}
+{% set framework = '.'.join(sdk_version.split('.')[:2]) %}
+{% set ext = "tar.gz" %}      # [unix]
 {% set ext = "zip" %}         # [win]
 
 package:
@@ -18,9 +9,25 @@ package:
   version: {{ sdk_version }}
 
 source:
-  url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-{{ platform }}.{{ ext }}
-  sha256: {{ sha256 }}
-  folder: dotnet
+  # Linux aarch64
+  - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-linux-arm64.{{ ext }}  # [linux and aarch64]
+    sha256: 67a077720d5affc9bfa8bcffbbaa17c0edda25dba59638fd1888d8fc62d78b16                                              # [linux and aarch64]
+    folder: dotnet                                                                                                        # [linux and aarch64]
+
+  # Linux x86_64
+  - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-linux-x64.{{ ext }}  # [linux and x86_64]
+    sha256: 550692ae3233e69692822b8be31bb01c5a2b60c3cfa59e9bfce8278b99f36211                                            # [linux and x86_64]
+    folder: dotnet                                                                                                      # [linux and x86_64]
+
+  # macOS arm64
+  - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-osx-arm64.{{ ext }}  # [osx]
+    sha256: e6ba41f9340fe71875bb569df92fa8e400f0cf71abf3cf19e5f1f8bd5e3e7bf5                                            # [osx]
+    folder: dotnet                                                                                                      # [osx]
+
+  # Windows x64
+  - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-win-x64.{{ ext }}    # [win]
+    sha256: fc225bcce6b54385580a16216e484b6119452ff6febac7da4e2a7e1fdee09921                                            # [win]
+    folder: dotnet                                                                                                      # [win]
 
 build:
   number: 0
@@ -31,40 +38,31 @@ outputs:
     version: {{ sdk_version }}
     requirements:
       run:
-        - {{ pin_subpackage('dotnet-runtime', exact=True) }}
-        - {{ pin_subpackage('dotnet-aspnetcore', exact=True) }}
-        - {{ pin_subpackage('dotnet-desktop', exact=True) }}  # [win]
-        - {{ pin_subpackage('dotnet-sdk', exact=True) }}
+        - {{ pin_subpackage('dotnet-aspnetcore') }}
+        - {{ pin_subpackage('dotnet-desktop') }}    # [win]
+        - {{ pin_subpackage('dotnet-runtime') }}
+        - {{ pin_subpackage('dotnet-sdk') }}
     test:
       commands:
-       - dotnet --version
+        - test "${DOTNET_ROOT}" = "${CONDA_PREFIX}/lib/dotnet"         # [unix]
+        - test "${DOTNET_TOOLS}" = "${CONDA_PREFIX}/lib/dotnet/tools"  # [unix]
+        - if not defined DOTNET_ROOT exit 1   # [win]
+        - if not defined DOTNET_TOOLS exit 1  # [win]
 
   - name: dotnet-runtime
     version: {{ runtime_version }}
-    script: build-runtime.bat       # [win]
-    script: build-runtime.sh        # [not win]
+    script: build-runtime.bat  # [win]
+    script: build-runtime.sh   # [unix]
+    build:
+      script_env:
+        - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
-      build:
-        - {{ compiler('cxx') }}
-        - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
       run:
-        - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
-        - icu                       # [unix]
-        - krb5                      # [unix]
-        - __glibc >=2.17            # [linux64]
+        - icu      # [unix]
+        - openssl  # [aarch64]
     test:
       commands:
         - dotnet --list-runtimes
-        #- test "${DOTNET_ROOT}" = "${CONDA_PREFIX}/lib/dotnet"         # [unix]
-        #- test "${DOTNET_TOOLS}" = "${CONDA_PREFIX}/lib/dotnet/tools"  # [unix]
-        #- if not defined DOTNET_ROOT exit 1   # [win]
-        #- if not defined DOTNET_TOOLS exit 1  # [win]
     about:
       home: https://github.com/dotnet/runtime
       license: MIT
@@ -75,28 +73,24 @@ outputs:
 
   - name: dotnet-sdk
     version: {{ sdk_version }}
-    script: build-sdk.bat       # [win]
-    script: build-sdk.sh        # [not win]
+    script: build-sdk.bat  # [win]
+    script: build-sdk.sh   # [unix]
     requirements:
-      build:
-        - {{ compiler('cxx') }}
-        - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
       run:
-        - lttng-ust             # [linux64]
-        - libcurl               # [unix]
-        - icu                   # [unix]
-        - krb5                  # [unix]
-        - __glibc >=2.17        # [linux64]
-        - dotnet-runtime ={{ runtime_version }}
+        - {{ pin_subpackage('dotnet-runtime') }}
     test:
       commands:
-        - dotnet --version                   # [not aarch64]
-        - test -f $PREFIX/lib/dotnet/dotnet  # [aarch64]
+        - test -d $PREFIX/lib/dotnet/packs      # [unix]
+        - test -d $PREFIX/lib/dotnet/sdk        # [unix]
+        - test -d $PREFIX/lib/dotnet/templates  # [unix]
+        - if not exist %PREFIX%\\dotnet\\packs exit 1      # [win]
+        - if not exist %PREFIX%\\dotnet\\sdk exit 1        # [win]
+        - if not exist %PREFIX%\\dotnet\\templates exit 1  # [win]
+        - dotnet --version
+        - mkdir self-test && cd self-test && dotnet new console && dotnet clean && dotnet build  # [unix]
+        - dotnet exec bin/Debug/net{{ framework }}/self-test.dll > self-test.txt  # [unix]
+        - grep "Hello, World!" self-test.txt  # [unix]
+        - mkdir self-test && cd self-test && dotnet new console && dotnet build && dotnet exec "bin/Debug/net{{ framework }}/self-test.dll" | findstr "Hello, World!"  # [win]
     about:
       home: https://github.com/dotnet/sdk
       license: MIT
@@ -107,27 +101,14 @@ outputs:
 
   - name: dotnet-aspnetcore
     version: {{ runtime_version }}
-    script: build-aspnetcore.bat    # [win]
-    script: build-aspnetcore.sh     # [not win]
+    script: build-aspnetcore.bat  # [win]
+    script: build-aspnetcore.sh   # [unix]
     requirements:
-      build:
-        - {{ compiler('cxx') }}
-        - posix                  # [win]
-        - sysroot_linux-64 2.17  # [linux64]
-      host:
-        - zlib                   # [unix]
-        - libcurl                # [unix]
-        - lttng-ust              # [linux64]
       run:
-        - lttng-ust                 # [linux64]
-        - libcurl                   # [unix]
-        - icu                       # [unix]
-        - krb5                      # [unix]
-        - __glibc >=2.17            # [linux64]
-        - dotnet-runtime ={{ runtime_version }}
+        - {{ pin_subpackage('dotnet-runtime') }}
     test:
       commands:
-        - test -d $PREFIX/lib/dotnet/shared/Microsoft.AspNetCore.App              # [not win]
+        - test -d $PREFIX/lib/dotnet/shared/Microsoft.AspNetCore.App              # [unix]
         - if not exist %PREFIX%\\dotnet\\shared\\Microsoft.AspNetCore.App exit 1  # [win]
     about:
       home: https://github.com/dotnet/aspnetcore
@@ -141,10 +122,8 @@ outputs:
     version: {{ runtime_version }}                                                    # [win]
     script: build-desktop.bat                                                         # [win]
     requirements:                                                                     # [win]
-      build:                                                                          # [win]
-        - posix                                                                       # [win]
       run:                                                                            # [win]
-        - dotnet-runtime ={{ runtime_version }}                                       # [win]
+        - {{ pin_subpackage('dotnet-runtime') }}                                      # [win]
     test:                                                                             # [win]
       commands:                                                                       # [win]
         - if not exist %PREFIX%\\dotnet\\shared\\Microsoft.WindowsDesktop.App exit 1  # [win]
@@ -152,17 +131,19 @@ outputs:
       home: https://github.com/dotnet/desktop                                         # [win]
       license: MIT                                                                    # [win]
       license_file: dotnet/LICENSE.txt                                                # [win]
-      summary: |                                                                      # [win]
-        .NET Core is a free and open-source managed computer software
-        framework for the Windows, Linux, and macOS operating systems.
+      summary: .NET Core is a free and open-source managed computer software framework for the Windows, Linux, and macOS operating systems.  # [win]
 
 about:
   home: https://github.com/dotnet/core
   license: MIT
   license_file: dotnet/LICENSE.txt
-  summary: |
+  license_family: MIT
+  summary: free, cross-platform, open source developer platform for building many different types of applications
+  description: |
     .NET Core is a free and open-source managed computer software
-    framework for the Windows, Linux, and macOS operating systems.
+    framework for the Windows, Linux, and macOS operating systems
+  dev_url: https://github.com/dotnet/core
+  doc_url: https://github.com/dotnet/core
 
 extra:
   recipe-maintainers:
