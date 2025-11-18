@@ -1,3 +1,0 @@
-c_stdlib_version:
-  # Needed for CryptoKit
-  - "11.3"  # [osx and x86_64]
