@@ -31,6 +31,7 @@ source:
 
 build:
   number: 0
+  skip: true  # [py<39]
 
 outputs:
   - name: dotnet
@@ -70,7 +71,7 @@ outputs:
         - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
         - $RPATH/api-ms-win-core-winrt-l1-1-0.dll  # [win]
       script_env:
-        - DOTNET_RUNTIME_VERSION={{ runtime_version }}
+      - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
       run:
         - icu      # [unix]
