@@ -31,7 +31,6 @@ source:
 
 build:
   number: 0
-  binary_relocation: False  # [osx]
 
 outputs:
   - name: dotnet
@@ -54,6 +53,22 @@ outputs:
     script: build-runtime.bat  # [win]
     script: build-runtime.sh   # [unix]
     build:
+      binary_relocation: False         # [unix]
+      runpath_whitelist:               # [unix]
+        - $ORIGIN                      # [unix]
+        - $ORIGIN/.*                   # [unix]
+      missing_dso_whitelist:
+        - $RPATH/libc.so.6             # [unix]
+        - $RPATH/libpthread.so.0       # [unix]
+        - $RPATH/libm.so.6             # [unix]
+        - $RPATH/librt.so.1            # [unix]
+        - $RPATH/libdl.so.2            # [unix]
+        - $RPATH/libgcc_s.so.1         # [unix]
+        - $RPATH/libstdc++.so.6        # [unix]
+        - $RPATH/libz.so.1             # [unix]
+        - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
+        - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
+        - $RPATH/api-ms-win-core-winrt-l1-1-0.dll  # [win]
       script_env:
         - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
@@ -75,6 +90,22 @@ outputs:
     version: {{ sdk_version }}
     script: build-sdk.bat  # [win]
     script: build-sdk.sh   # [unix]
+    build:
+      binary_relocation: False         # [unix]
+      runpath_whitelist:               # [unix]
+        - $ORIGIN                      # [unix]
+        - $ORIGIN/.*                   # [unix]
+      missing_dso_whitelist:           # [unix]
+        - $RPATH/libc.so.6             # [unix]
+        - $RPATH/libpthread.so.0       # [unix]
+        - $RPATH/libm.so.6             # [unix]
+        - $RPATH/librt.so.1            # [unix]
+        - $RPATH/libdl.so.2            # [unix]
+        - $RPATH/libgcc_s.so.1         # [unix]
+        - $RPATH/libstdc++.so.6        # [unix]
+        - $RPATH/libz.so.1             # [unix]
+        - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
+        - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
@@ -103,6 +134,22 @@ outputs:
     version: {{ runtime_version }}
     script: build-aspnetcore.bat  # [win]
     script: build-aspnetcore.sh   # [unix]
+    build:
+      binary_relocation: False         # [unix]
+      runpath_whitelist:               # [unix]
+        - $ORIGIN                      # [unix]
+        - $ORIGIN/.*                   # [unix]
+      missing_dso_whitelist:           # [unix]
+        - $RPATH/libc.so.6             # [unix]
+        - $RPATH/libpthread.so.0       # [unix]
+        - $RPATH/libm.so.6             # [unix]
+        - $RPATH/librt.so.1            # [unix]
+        - $RPATH/libdl.so.2            # [unix]
+        - $RPATH/libgcc_s.so.1         # [unix]
+        - $RPATH/libstdc++.so.6        # [unix]
+        - $RPATH/libz.so.1             # [unix]
+        - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
+        - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
@@ -121,6 +168,10 @@ outputs:
   - name: dotnet-desktop                                                              # [win]
     version: {{ runtime_version }}                                                    # [win]
     script: build-desktop.bat                                                         # [win]
+    build:                                                                            # [win]
+      binary_relocation: False                                                        # [win]
+      missing_dso_whitelist:                                                          # [win]
+        - $RPATH/D3DCompiler_47_cor3.dll                                              # [win]
     requirements:                                                                     # [win]
       run:                                                                            # [win]
         - {{ pin_subpackage('dotnet-runtime') }}                                      # [win]
