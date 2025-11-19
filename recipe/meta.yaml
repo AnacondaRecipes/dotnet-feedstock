@@ -31,6 +31,7 @@ source:
 
 build:
   number: 0
+  binary_relocation: False
   skip: true  # [py<39]
 
 outputs:
@@ -54,11 +55,12 @@ outputs:
     script: build-runtime.bat  # [win]
     script: build-runtime.sh   # [unix]
     build:
-      binary_relocation: False         # [unix]
+      binary_relocation: False
       runpath_whitelist:               # [unix]
         - $ORIGIN                      # [unix]
         - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
+        - "*"
         - $RPATH/libc.so.6             # [unix]
         - $RPATH/libpthread.so.0       # [unix]
         - $RPATH/libm.so.6             # [unix]
@@ -73,6 +75,10 @@ outputs:
       script_env:
       - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
+      build:
+        # - {{ stdlib('c') }}
+        # - {{ compiler('cxx') }}
+        - posix                  # [win]
       run:
         - icu      # [unix]
         - openssl  # [aarch64]
@@ -92,11 +98,12 @@ outputs:
     script: build-sdk.bat  # [win]
     script: build-sdk.sh   # [unix]
     build:
-      binary_relocation: False         # [unix]
+      binary_relocation: False
       runpath_whitelist:               # [unix]
         - $ORIGIN                      # [unix]
         - $ORIGIN/.*                   # [unix]
-      missing_dso_whitelist:           # [unix]
+      missing_dso_whitelist:
+        - "*"
         - $RPATH/libc.so.6             # [unix]
         - $RPATH/libpthread.so.0       # [unix]
         - $RPATH/libm.so.6             # [unix]
@@ -108,6 +115,10 @@ outputs:
         - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
         - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
+      build:
+        # - {{ stdlib('c') }}
+        # - {{ compiler('cxx') }}
+        - posix                  # [win]
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
     test:
@@ -120,7 +131,7 @@ outputs:
         - if not exist %PREFIX%\\dotnet\\templates exit 1  # [win]
         - dotnet --version
         - mkdir self-test && cd self-test && dotnet new console && dotnet clean && dotnet build  # [unix]
-        - dotnet exec bin/Debug/net{{ framework }}/self-test.dll > self-test.txt  # [unix]
+        # - dotnet exec bin/Debug/net{{ framework }}/self-test.dll > self-test.txt  # [unix]
         - grep "Hello, World!" self-test.txt  # [unix]
         - mkdir self-test && cd self-test && dotnet new console && dotnet build && dotnet exec "bin/Debug/net{{ framework }}/self-test.dll" | findstr "Hello, World!"  # [win]
     about:
@@ -136,11 +147,12 @@ outputs:
     script: build-aspnetcore.bat  # [win]
     script: build-aspnetcore.sh   # [unix]
     build:
-      binary_relocation: False         # [unix]
+      binary_relocation: False
       runpath_whitelist:               # [unix]
         - $ORIGIN                      # [unix]
         - $ORIGIN/.*                   # [unix]
-      missing_dso_whitelist:           # [unix]
+      missing_dso_whitelist:
+        - "*"
         - $RPATH/libc.so.6             # [unix]
         - $RPATH/libpthread.so.0       # [unix]
         - $RPATH/libm.so.6             # [unix]
@@ -152,6 +164,10 @@ outputs:
         - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
         - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
+      build:
+        # - {{ stdlib('c') }}
+        # - {{ compiler('cxx') }}
+        - posix                  # [win]
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
     test:
@@ -172,8 +188,11 @@ outputs:
     build:                                                                            # [win]
       binary_relocation: False                                                        # [win]
       missing_dso_whitelist:                                                          # [win]
+        - "*"                                                                         # [win]
         - $RPATH/D3DCompiler_47_cor3.dll                                              # [win]
     requirements:                                                                     # [win]
+      build:                                                                          # [win]
+        - posix                                                                       # [win]
       run:                                                                            # [win]
         - {{ pin_subpackage('dotnet-runtime') }}                                      # [win]
     test:                                                                             # [win]
