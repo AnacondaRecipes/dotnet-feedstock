@@ -32,7 +32,6 @@ source:
 build:
   number: 0
   binary_relocation: False
-  skip: true  # [py<39]
 
 outputs:
   - name: dotnet
@@ -61,24 +60,10 @@ outputs:
         - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
         - "*"
-        # - $RPATH/libc.so.6             # [unix]
-        # - $RPATH/libpthread.so.0       # [unix]
-        # - $RPATH/libm.so.6             # [unix]
-        # - $RPATH/librt.so.1            # [unix]
-        # - $RPATH/libdl.so.2            # [unix]
-        # - $RPATH/libgcc_s.so.1         # [unix]
-        # - $RPATH/libstdc++.so.6        # [unix]
-        # - $RPATH/libz.so.1             # [unix]
-        # - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
-        # - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
-        # - $RPATH/api-ms-win-core-winrt-l1-1-0.dll  # [win]
       script_env:
       - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
       build:
-        # - {{ stdlib('c') }}
-        # - {{ compiler('cxx') }}
-        # - posix                  # [win]
       run:
         - icu      # [unix]
         - openssl  # [aarch64]
@@ -104,21 +89,8 @@ outputs:
         - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
         - "*"
-        # - $RPATH/libc.so.6             # [unix]
-        # - $RPATH/libpthread.so.0       # [unix]
-        # - $RPATH/libm.so.6             # [unix]
-        # - $RPATH/librt.so.1            # [unix]
-        # - $RPATH/libdl.so.2            # [unix]
-        # - $RPATH/libgcc_s.so.1         # [unix]
-        # - $RPATH/libstdc++.so.6        # [unix]
-        # - $RPATH/libz.so.1             # [unix]
-        # - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
-        # - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
       build:
-        # - {{ stdlib('c') }}
-        # - {{ compiler('cxx') }}
-        # - posix                  # [win]
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
     test:
@@ -131,6 +103,7 @@ outputs:
         - if not exist %PREFIX%\\dotnet\\packs exit 1      # [win]
         - if not exist %PREFIX%\\dotnet\\sdk exit 1        # [win]
         - if not exist %PREFIX%\\dotnet\\templates exit 1  # [win]
+        - export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1   # [linux]
         - dotnet --version
         - mkdir self-test && cd self-test && dotnet new console --framework net{{ framework }}            # [unix]
         - dotnet build -c Debug --framework net{{ framework }}                                            # [unix]
@@ -153,26 +126,10 @@ outputs:
     script: build-aspnetcore.sh   # [unix]
     build:
       binary_relocation: False
-      # runpath_whitelist:               # [unix]
-      #   - $ORIGIN                      # [unix]
-      #   - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
         - "*"
-        # - $RPATH/libc.so.6             # [unix]
-        # - $RPATH/libpthread.so.0       # [unix]
-        # - $RPATH/libm.so.6             # [unix]
-        # - $RPATH/librt.so.1            # [unix]
-        # - $RPATH/libdl.so.2            # [unix]
-        # - $RPATH/libgcc_s.so.1         # [unix]
-        # - $RPATH/libstdc++.so.6        # [unix]
-        # - $RPATH/libz.so.1             # [unix]
-        # - /lib/ld-linux-aarch64.so.1   # [linux and aarch64]
-        # - /lib64/ld-linux-x86-64.so.2  # [linux and x86_64]
     requirements:
       build:
-        # - {{ stdlib('c') }}
-        # - {{ compiler('cxx') }}
-        # - posix                  # [win]
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
     test:
@@ -194,10 +151,7 @@ outputs:
       binary_relocation: False                                                        # [win]
       missing_dso_whitelist:                                                          # [win]
         - "*"                                                                         # [win]
-        # - $RPATH/D3DCompiler_47_cor3.dll                                              # [win]
     requirements:                                                                     # [win]
-      # build:                                                                          # [win]
-      #   - posix                                                                       # [win]
       run:                                                                            # [win]
         - {{ pin_subpackage('dotnet-runtime') }}                                      # [win]
     test:                                                                             # [win]
