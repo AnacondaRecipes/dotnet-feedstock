@@ -60,10 +60,7 @@ outputs:
         - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
         - "*"
-      script_env:
-      - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
-      build:
       run:
         - icu      # [unix]
         - openssl  # [aarch64]
@@ -90,12 +87,11 @@ outputs:
       missing_dso_whitelist:
         - "*"
     requirements:
-      build:
       run:
         - {{ pin_subpackage('dotnet-runtime') }}
     test:
       requires:
-        - icu      # [unix]
+        - icu      # [linux]
       commands:
         - test -d $PREFIX/lib/dotnet/packs      # [unix]
         - test -d $PREFIX/lib/dotnet/sdk        # [unix]
