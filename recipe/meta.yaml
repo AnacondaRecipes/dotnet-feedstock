@@ -60,6 +60,8 @@ outputs:
         - $ORIGIN/.*                   # [unix]
       missing_dso_whitelist:
         - "*"
+      script_env:
+      - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
       run:
         - icu      # [unix]
