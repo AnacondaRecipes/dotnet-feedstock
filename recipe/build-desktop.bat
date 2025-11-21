@@ -1,13 +1,28 @@
-copy "%RECIPE_DIR%\build-desktop.sh" .
-set PREFIX=%PREFIX:\=/%
-set SRC_DIR=%SRC_DIR:\=/%
-set MSYSTEM=MINGW%ARCH%
-set MSYS2_PATH_TYPE=inherit
-set CHERE_INVOKING=1
-set BUILD_PLATFORM=win-64
+@echo on
+setlocal enabledelayedexpansion
 
+REM --- Ensure required env vars are present ---
+if "%PREFIX%"=="" (
+  echo [build-desktop.bat] PREFIX is empty
+  exit /b 1
+)
 
-bash -lc "./build-desktop.sh"
-if %ERRORLEVEL% neq 0 exit /b %ERRORLEVEL%
+REM --- Define source and destination paths ---
+set "DOTSRC=%SRC_DIR%\dotnet"
+set "DOTNET_ROOT=%PREFIX%\dotnet"
+
+REM --- Verify source ---
+if not exist "%DOTSRC%\shared\Microsoft.WindowsDesktop.App" (
+  echo [build-desktop.bat] Source not found: "%DOTSRC%\shared\Microsoft.WindowsDesktop.App"
+  dir "%DOTSRC%\shared"
+  exit /b 1
+)
+
+REM --- Copy WindowsDesktop shared framework ---
+mkdir "%DOTNET_ROOT%\shared\Microsoft.WindowsDesktop.App" 2>nul
+xcopy /e /i /y "%DOTSRC%\shared\Microsoft.WindowsDesktop.App" "%DOTNET_ROOT%\shared\Microsoft.WindowsDesktop.App\" >nul
+
+REM --- Sanity check ---
+if not exist "%DOTNET_ROOT%\shared\Microsoft.WindowsDesktop.App" exit /b 1
 
 exit /b 0
