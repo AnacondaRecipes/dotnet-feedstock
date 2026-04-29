@@ -30,7 +30,7 @@ source:
     folder: dotnet                                                                                                      # [win]
 
 build:
-  number: 0
+  number: 1
   binary_relocation: False
 
 outputs:
