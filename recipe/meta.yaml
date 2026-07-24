@@ -30,7 +30,7 @@ source:
     folder: dotnet                                                                                                      # [win]
 
 build:
-  number: 1
+  number: 2
   binary_relocation: False
 
 outputs:
@@ -63,6 +63,9 @@ outputs:
       script_env:
       - DOTNET_RUNTIME_VERSION={{ runtime_version }}
     requirements:
+      host:
+        - icu {{ icu }}          # [unix]
+        - openssl  {{ openssl }} # [aarch64]
       run:
         - icu      # [unix]
         - openssl  # [aarch64]
