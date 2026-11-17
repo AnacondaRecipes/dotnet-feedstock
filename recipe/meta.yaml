@@ -1,5 +1,5 @@
-{% set sdk_version = "8.0.428" %}
-{% set runtime_version = "8.0.34" %}
+{% set sdk_version = "11.0.100" %}
+{% set runtime_version = "11.0.0" %}
 {% set framework = '.'.join(sdk_version.split('.')[:2]) %}
 {% set ext = "tar.gz" %}      # [unix]
 {% set ext = "zip" %}         # [win]
@@ -11,27 +11,27 @@ package:
 source:
   # Linux aarch64
   - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-linux-arm64.{{ ext }}  # [linux and aarch64]
-    sha256: 37fc9f2c95e02162d11dd5c9994c9bb2a12c5317b1a1a129ee5968205cc94285                                              # [linux and aarch64]
+    sha256: 699951697c76af6ba714fbbe9b45372d1f189d00f303a67ba2e90d53acf630b2                                              # [linux and aarch64]
     folder: dotnet                                                                                                        # [linux and aarch64]
 
   # Linux x86_64
   - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-linux-x64.{{ ext }}  # [linux and x86_64]
-    sha256: 6f8b64ef9644b11bcab6748ebfec088d2ae4868df26204bb2354c3ada0f09cbe                                            # [linux and x86_64]
+    sha256: 6fdb8822f47ccdba28f507dcd5d92e632d5b99cd27908d6838f0cc575be33baf                                            # [linux and x86_64]
     folder: dotnet                                                                                                      # [linux and x86_64]
 
   # macOS arm64
   - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-osx-arm64.{{ ext }}  # [osx]
-    sha256: 4ce04ab524f2e176506a7dbaf72020f5198af032a8cf685573de3fa9c2bf236b                                            # [osx]
+    sha256: a2e6635ffec544e9a7a98bde44d75bfbc71b2c19b33c3c088774ef2498edf380                                            # [osx]
     folder: dotnet                                                                                                      # [osx]
 
   # Windows x64
   - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-win-x64.{{ ext }}    # [win and x86_64]
-    sha256: 3528049a139fa0e336e340c82c1266532f497a4ba439747eca647078691c49c5                                            # [win and x86_64]
+    sha256: ae800f1fa1a6428e0d7c740bb745d9414f15334118c51e246dab9850b738fadd                                            # [win and x86_64]
     folder: dotnet                                                                                                      # [win and x86_64]
   
   # Windows arm64 
   - url: https://dotnetcli.azureedge.net/dotnet/Sdk/{{ sdk_version }}/dotnet-sdk-{{ sdk_version }}-win-arm64.{{ ext }}  # [win and arm64]
-    sha256: ab9f2edea25beea542c566479debb32d499f5ddda42053d5ace706be97f02b81                                            # [win and arm64]
+    sha256: f9a271f91ea25a65f7eb742269b0881f657ff35b2b485016d27e2cc7b27c1969                                            # [win and arm64]
     folder: dotnet                                                                                                      # [win and arm64]
 
 build:
