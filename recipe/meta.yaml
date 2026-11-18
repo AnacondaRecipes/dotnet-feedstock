@@ -108,13 +108,13 @@ outputs:
         - if not exist %PREFIX%\\dotnet\\templates exit 1  # [win]
         - export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1   # [linux]
         - export DOTNET_CLI_TELEMETRY_OPTOUT=1            # [osx]
-        - dotnet --version
         - sw_vers                                                                   # [osx]
         - uname -m                                                                  # [osx]
         - ls /usr/lib/swift/ || true                                                # [osx]
         - otool -l $PREFIX/lib/dotnet/shared/Microsoft.NETCore.App/{{ runtime_version }}/libSystem.Security.Cryptography.Native.Apple.dylib | grep -A5 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true   # [osx]
         - otool -L $PREFIX/lib/dotnet/shared/Microsoft.NETCore.App/{{ runtime_version }}/libSystem.Security.Cryptography.Native.Apple.dylib || true   # [osx]
         - otool -l $PREFIX/lib/dotnet/sdk/{{ sdk_version }}/libdotnet-aot.dylib | grep -A5 -E 'LC_BUILD_VERSION|LC_VERSION_MIN_MACOSX' || true   # [osx]
+        - dotnet --version
         - mkdir self-test && cd self-test && dotnet new console --framework net{{ framework }}            # [unix]
         - dotnet build -c Debug --framework net{{ framework }}                                            # [unix]
         - dotnet run --no-restore --no-build --framework net{{ framework }} | grep -F "Hello, World!"     # [unix]
