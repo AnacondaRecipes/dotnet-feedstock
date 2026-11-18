@@ -1,0 +1,12 @@
+c_stdlib_version:  # [osx]
+  - 12.0           # [osx]
+OSX_SDK_VER:       # [osx]
+  - 14.5           # [osx]
+
+c_compiler_version:    # [osx]
+  - 20                 # [osx]
+cxx_compiler_version:  # [osx]
+  - 20                 # [osx]
+
+CONDA_BUILD_SYSROOT:
+  - /Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk  # [osx]
