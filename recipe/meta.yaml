@@ -108,6 +108,7 @@ outputs:
         - if not exist %PREFIX%\\dotnet\\sdk exit 1        # [win]
         - if not exist %PREFIX%\\dotnet\\templates exit 1  # [win]
         - export DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1   # [linux]
+        - dotnet --version
         - mkdir self-test && cd self-test && dotnet new console --framework net{{ framework }}            # [unix]
         - dotnet build -c Debug --framework net{{ framework }}                                            # [unix]
         - dotnet run --no-restore --no-build --framework net{{ framework }} | grep -F "Hello, World!"     # [unix]
