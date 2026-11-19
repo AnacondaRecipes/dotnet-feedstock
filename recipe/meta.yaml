@@ -71,7 +71,7 @@ outputs:
       run:
         - icu      # [unix]
         - openssl  # [aarch64]
-        - __osx >=14.0   # [osx]
+        # - __osx >=14.0   # [osx]
     test:
       commands:
         - dotnet --list-runtimes
